@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dairy Delights | Fresh & Organic</title>
+    <script src="script.js" defer></script>
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f3e9d2, #f8d7a8);
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
+
+        /* Header Styling */
+        header {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        header nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        header nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease, transform 0.2s;
+        }
+
+        header nav a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 25px;
+            padding: 5px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar input {
+            width: 100%;
+            border: none;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .search-bar button {
+            background: linear-gradient(135deg, #ff6a00, #ee0979);
+            border: none;
+            padding: 12px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s;
+            font-size: 20px;
+            color: white;
+        }
+
+        .search-bar button:hover {
+            background: linear-gradient(135deg, #ee0979, #ff6a00);
+            transform: scale(1.1);
+        }
+
+        /* Product List */
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            padding: 40px;
+        }
+
+        .product {
+            background: white;
+            width: 300px;
+            height: 420px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .product img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .product h2 {
+            font-size: 22px;
+            padding: 10px 0;
+            color: #222;
+        }
+
+        .product p {
+            font-size: 16px;
+            color: #666;
+            padding: 0 15px;
+        }
+
+        .product .price {
+            font-size: 22px;
+            color: #ff6a00;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .product button {
+            background: linear-gradient(135deg, #ff6a00, #ee0979);
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 0 0 15px 15px;
+            transition: background 0.3s ease, transform 0.2s;
+        }
+
+        .product button:hover {
+            background: linear-gradient(135deg, #ee0979, #ff6a00);
+            transform: scale(1.05);
+        }
+
+        /* Footer Styling */
+        footer {
+            background: linear-gradient(135deg, #ff6a00, #ee0979);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .footer-section {
+            text-align: left;
+        }
+
+        .footer-bottom {
+            margin-top: 10px;
+        }
+
+        footer a {
+            color: #fff700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .product-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            .product {
+                width: 90%;
+                height: auto;
+            }
+            .product img {
+                height: 220px;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            header nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div style="background: linear-gradient(135deg, #ffb347, #ffcc33); 
+                color: #772F1A; 
+                padding: 12px; 
+                text-align: center; 
+                font-size: 18px; 
+                font-weight: bold; 
+                border-radius: 8px; 
+                margin-top: 10px; 
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        🎉 Use <strong>DAIRY20</strong> to get <strong>20% OFF</strong> on your order! 🛒
+    </div>
+    <header>
+        <h1>Dairy Delights</h1>
+        <nav>
+            <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+            <a href="about.html">About Us</a>
+            <a href="login.html">Login</a>
+            <a href="contact.html">Contact Us</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+    </header>
+
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Search for products...">
+        <button onclick="searchProducts()">🔍</button>
+    </div>
+    
+    <section class="product-list" id="product-list">
+        <!-- Products will be dynamically loaded here -->
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>We provide fresh, organic dairy products straight from the farm to your table.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: <a href="mailto:support@dairydelights.com">dairydelights2602@gmail.com</a></p>
+                <p>Phone: +91 8469434870</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="https://www.facebook.com/share/1EPaMQzLnc/">Facebook</a> | <a href="https://www.instagram.com/ayushvyas_2601?igsh=MXgxa3g5OW9sNG5wdw==">Instagram</a> | <a href="https://x.com/TONIGHTGAMER_?t=E4g_BfHo__fQywqVkBHPAw&s=08">Twitter</a>
+            </div>
+        </div>
+        <p class="footer-bottom">&copy; 2025 Dairy Delights | <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+</body>
+</html>

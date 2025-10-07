@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="order-style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <div class="confirmation-container">
+        <div class="loading-spinner"></div>
+        <h2 id="confirmation-message">Processing your order...</h2>
+        <button id="done-button" onclick="submitOrder()" style="display: none;">Done</button>
+        <button id="download-bill-btn" onclick="downloadBill()" style="display: none;">Download Bill (PDF)</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                document.querySelector(".loading-spinner").style.display = "none";
+                document.getElementById("confirmation-message").innerText = "🎉 Order Confirmed Successfully!";
+                document.getElementById("done-button").style.display = "block";
+                document.getElementById("download-bill-btn").style.display = "block"; // Show download bill button
+            }, 3000);
+        });
+
+        function submitOrder() {
+            let orderDetails = JSON.parse(localStorage.getItem("pendingOrder"));
+
+            if (!orderDetails) {
+                alert("No order found!");
+                window.location.href = "HOME.html"; // Redirect to products page
+                return;
+            }
+
+            fetch("http://localhost/Dairy_product/save_order.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderDetails)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Server Response:", data);
+                if (data.error) {
+                    alert("Error saving order: " + data.error);
+                } else {
+                    alert("Order successfully placed!");
+                    localStorage.removeItem("cart");
+                    localStorage.removeItem("pendingOrder");
+                    window.location.href = "HOME.html"; // Redirect to products page
+                }
+            })
+            .catch(error => {
+                console.error("Fetch Error:", error);
+                alert("Error saving order!");
+            });
+        }
+
+        function downloadBill() {
+            const { jsPDF } = window.jspdf;
+            let pdf = new jsPDF();
+
+            let orderDetails = JSON.parse(localStorage.getItem("pendingOrder"));
+            if (!orderDetails) {
+                alert("No order details found!");
+                return;
+            }
+
+            pdf.setFontSize(18);
+            pdf.text("Dairy Delight - Invoice", 70, 15);
+            pdf.setFontSize(12);
+            pdf.text("Phone: +91 8469434870", 10, 30);
+            pdf.text("Address: L.J Polytechnic", 10, 40);
+            pdf.line(10, 45, 200, 45);
+
+            let y = 55;
+            pdf.text("Product Details:", 10, y);
+            orderDetails.products.forEach((item, index) => {
+                y += 10;
+                pdf.text(`${index + 1}. ${item.name} - ₹${item.price} x ${item.quantity} = ₹${item.total}`, 10, y);
+            });
+
+            y += 15;
+            pdf.line(10, y, 200, y);
+            y += 10;
+            pdf.text(`Subtotal: ₹${orderDetails.total}`, 10, y);
+            pdf.text(`Payment Method: ${orderDetails.paymentMethod}`, 10, y + 10);
+            pdf.setFontSize(14);
+            pdf.text(`Total: ₹${orderDetails.total}`, 10, y + 20);
+            pdf.save("Dairy_Delight_Bill.pdf");
+        }
+    </script>
+
+</body>
+</html>

@@ -2,50 +2,24 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-session_start();
-if (!isset($_SESSION['admin_email'])) {
-    header('Location: login.php');
-    exit();
-}
-
 // Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
 $database = "dairy_products";
 
-$conn = new mysqli($servername, $username, $password, $database);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$conn = mysqli_connect($servername, $username, $password, $database);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
 // Load PHPMailer
 require __DIR__ . '/vendor/autoload.php';
 
-$successMessage = "";
-$errorMessage = "";
-$review_id = isset($_GET['review_id']) ? $_GET['review_id'] : '';
-
-$customer_email = "";
-$customer_feedback = "";
-
-// Fetch email and feedback
-if (!empty($review_id)) {
-    $query = "SELECT email, feedback FROM feedback WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $review_id);
-    $stmt->execute();
-    $stmt->bind_result($customer_email, $customer_feedback);
-    $stmt->fetch();
-    $stmt->close();
-}
-
-// Handle email submission
 if (isset($_POST['send_email'])) {
-    $review_id = $_POST['review_id'];
-    $user_email = $_POST['email'];
-    $subject = $_POST['subject'];
-    $message = nl2br($_POST['message']);
+    $user_email = $_POST['email']; 
+    $subject = $_POST['subject']; 
+    $message = nl2br($_POST['message']); // Converts new lines to <br> for better formatting in emails
 
     try {
         $mail = new PHPMailer(true);
@@ -54,8 +28,8 @@ if (isset($_POST['send_email'])) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'dairydelights2602@gmail.com';
-        $mail->Password = 'verkbntclewxcewa';
+        $mail->Username = 'dairydelights2602@gmail.com'; // Your Gmail
+        $mail->Password = 'verkbntclewxcewa'; // Your 16-character App Password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
@@ -67,23 +41,13 @@ if (isset($_POST['send_email'])) {
         // Email Content
         $mail->isHTML(true);
         $mail->Subject = $subject;
-        $mail->Body = "<p>$message</p>";
+        $mail->Body = "<p>$message</p>"; // HTML formatting
 
         // Send email
         $mail->send();
-
-        // Update feedback reply in DB
-        $update_sql = "UPDATE feedback SET reply = ? WHERE id = ?";
-        $stmt = $conn->prepare($update_sql);
-        $stmt->bind_param("si", $message, $review_id);
-        if ($stmt->execute()) {
-            $successMessage = "✅ Email sent & reply saved!";
-        } else {
-            $errorMessage = "⚠️ Email sent, but failed to save reply.";
-        }
-        $stmt->close();
+        echo 'Email sent successfully!';
     } catch (Exception $e) {
-        $errorMessage = "❌ Failed to send email. Error: " . $mail->ErrorInfo;
+        echo 'Failed to send email. Error: ' . $mail->ErrorInfo;
     }
 }
 ?>
@@ -97,116 +61,58 @@ if (isset($_POST['send_email'])) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1e1e2f;
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            width: 95%;
-            max-width: 600px;
-            margin: 50px auto;
-            background: #282a36;
-            padding: 30px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            text-align: left;
+            width: 400px;
+            text-align: center;
         }
         h2 {
-            text-align: center;
-            color: #f8f8f2;
             margin-bottom: 20px;
+            color: #333;
         }
         label {
             font-weight: bold;
             display: block;
-            margin-top: 15px;
-            color: #f8f8f2;
+            text-align: left;
+            margin-top: 10px;
         }
         input, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background: #44475a;
-            color: white;
-        }
-        input[readonly], textarea[readonly] {
-            background-color: #3c3f52;
-            cursor: not-allowed;
         }
         button {
-            margin-top: 20px;
-            background-color: #f1c40f;
-            color: black;
+            margin-top: 15px;
+            background-color: #28a745;
+            color: white;
             border: none;
             padding: 10px 15px;
             width: 100%;
             cursor: pointer;
             border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
         }
         button:hover {
-            background-color: #d4ac0d;
-        }
-        .message-box {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .success {
-            background-color: #28a745;
-            color: white;
-            border: 1px solid #1e7e34;
-            text-align: center;
-        }
-        .error {
-            background-color: #ff5555;
-            color: white;
-            border: 1px solid #ff3333;
-            text-align: center;
-        }
-        .back-btn {
-            display: inline-block;
-            margin-top: 20px;
-            background: #bd93f9;
-            color: white;
-            padding: 12px 18px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: center;
-            width: 100%;
-            display: block;
-        }
-        .back-btn:hover {
-            background: #8be9fd;
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Send Reply</h2>
-
-        <?php if (!empty($successMessage)): ?>
-            <div class="message-box success"><?php echo $successMessage; ?></div>
-        <?php endif; ?>
-
-        <?php if (!empty($errorMessage)): ?>
-            <div class="message-box error"><?php echo $errorMessage; ?></div>
-        <?php endif; ?>
-
         <form action="reply_feedback.php" method="POST">
-            <input type="hidden" name="review_id" value="<?php echo htmlspecialchars($review_id); ?>">
-
             <label for="email">Customer Email:</label>
-            <input type="email" name="email" value="<?php echo htmlspecialchars($customer_email); ?>" readonly>
-
-            <label for="feedback">Customer Feedback:</label>
-            <textarea name="feedback" readonly><?php echo htmlspecialchars($customer_feedback); ?></textarea>
+            <input type="email" name="email" required>
 
             <label for="subject">Subject:</label>
             <input type="text" name="subject" required>
@@ -216,12 +122,6 @@ if (isset($_POST['send_email'])) {
 
             <button type="submit" name="send_email">Send Reply</button>
         </form>
-
-        <a href="reviews.php" class="back-btn">⬅ Back to Reviews</a>
     </div>
 </body>
 </html>
-
-<?php
-$conn->close();
-?>
